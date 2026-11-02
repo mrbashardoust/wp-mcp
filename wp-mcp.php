@@ -59,6 +59,8 @@ add_action(
 	'wp_abilities_api_init',
 	function () {
 		require __DIR__ . '/includes/system.php';
+		require __DIR__ . '/includes/content.php';
+		require __DIR__ . '/includes/rest.php';
 	}
 );
 
