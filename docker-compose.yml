@@ -1,0 +1,42 @@
+# Local dev site: http://localhost:8888 (admin / admin). Setup: bash bin/setup.sh
+services:
+  db:
+    image: mariadb:11
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+    volumes:
+      - db:/var/lib/mysql
+
+  wordpress:
+    image: wordpress:php8.3-apache
+    depends_on: [db]
+    ports:
+      - "8888:80"
+    environment: &wp-env
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: 1
+      # 'local' lets Application Passwords work over plain http.
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_ENVIRONMENT_TYPE', 'local' );
+        define( 'WP_DEBUG_LOG', true );
+    volumes: &wp-volumes
+      - wp:/var/www/html
+      - .:/var/www/html/wp-content/plugins/wp-mcp
+
+  cli:
+    image: wordpress:cli-php8.3
+    depends_on: [db]
+    user: "33:33"
+    environment: *wp-env
+    volumes: *wp-volumes
+    profiles: [cli]
+
+volumes:
+  db:
+  wp:

@@ -1,0 +1,5 @@
+node_modules/
+.wp-env.override.json
+*.zip
+*.log
+.claude/settings.local.json
